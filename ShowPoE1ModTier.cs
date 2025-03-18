@@ -46,6 +46,7 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
         if (tooltip == null || pEntity == null || pEntity.Address == 0) return;
 
         var iInfoBase = pEntity.GetComponent<Base>();
+        if (iInfoBase == null) return;
         var iInfo = iInfoBase.Info;
         
         var iTags = iInfoBase.Info.BaseItemTypeDat.MoreTagsFromPath[0];
@@ -54,6 +55,7 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
             iTags == "relic" || iTags == "" || iTags == "ultimatum" || iTags == "tower_augment" || iTags == "jewel") return;
 
         var compMods = pEntity.GetComponent<Mods>();
+        if (compMods == null) return:
         var isIdentified = compMods.Identified;
         if (!isIdentified) return;
         var iRarity = compMods.ItemRarity.ToString();
