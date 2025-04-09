@@ -12081,7 +12081,6 @@
 	},
 	"Buckler": {
 		"dex_armour": {
-			"mods": {
 				"Suffix": {
 					"Dexterity": {
 						"Dexterity1": 1,
@@ -12238,7 +12237,7 @@
 						"LocalBlockChance7": 82
 					}
 				}
-			}
+			
 		}
 	},
 
