@@ -1,8 +1,9 @@
-﻿using ExileCore2;
+using ExileCore2;
 using ExileCore2.PoEMemory.Components;
 using ExileCore2.PoEMemory.Elements;
 using Newtonsoft.Json.Linq;
 using ShowPoE1ModTier.Classes;
+using System.Collections.Generic;
 using System.Drawing;
 using Vector2N = System.Numerics.Vector2;
 
@@ -31,76 +32,132 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
         if (!Settings.Enable) return;
         var uiHover = GameController.Game.IngameState.UIHover;
         var rPanel = GameController.Game.IngameState.IngameUi.OpenRightPanel;
-        if (rPanel == null) return;
-        if (uiHover?.Address == 0) return;
+        var lPanel = GameController.Game.IngameState.IngameUi.OpenLeftPanel;
 
         var inventoryItemIcon = uiHover?.AsObject<HoverItemIcon>();
-        if (inventoryItemIcon?.Tooltip == null)
-            return;
-
-        var modList = ITier.ModList();
-        if (modList == null) return;
-
-        var tooltip = inventoryItemIcon.Tooltip;
-        var pEntity = inventoryItemIcon.Item;
-        if (tooltip == null || pEntity == null || pEntity.Address == 0) return;
-
-        var iInfoBase = pEntity.GetComponent<Base>();
-        if (iInfoBase == null) return;
-        var iInfo = iInfoBase.Info;
-        
-        var iTags = iInfoBase.Info.BaseItemTypeDat.MoreTagsFromPath[0];
-        if (iTags == "flask" || iTags == "currency" || iTags == "map" || iTags == "soul_core" ||
-            iTags == "pinnacle" || iTags == "gem" || iTags == "expedition" || iTags == "sanctum" ||
-            iTags == "relic" || iTags == "" || iTags == "ultimatum" || iTags == "tower_augment" || iTags == "jewel") return;
-
-        var compMods = pEntity.GetComponent<Mods>();
-        if (compMods == null) return;
-        var isIdentified = compMods.Identified;
-        if (!isIdentified) return;
-        var iRarity = compMods.ItemRarity.ToString();
-        if (iRarity == "Unique") return;
-
-        var tooltipRect = tooltip.GetClientRect();
-        var bottomLefttRect = tooltipRect.BottomLeft;
-        var bottomRightRect = tooltipRect.BottomRight;
-        Vector2N charSize = new Vector2N(0.0f, 15.0f);
-
-        string iBase = iInfo.BaseItemTypeDat.ClassName;
-        string iType = iInfo.BaseItemTypeDat.ClassName.ToLower();
-
-        if (iInfo.BaseItemTypeDat.MoreTagsFromPath[0] == "armour")
-            iType = iInfo.BaseItemTypeDat.Tags[0];
-        var iBasesplit = iBase.Split(" ");
-        if (iBasesplit.Length == 3) iType = iBasesplit[2].ToLower();
-        var iMods = compMods.ExplicitMods;
-        var jBase = modList.GetValue(iBase).ToObject<JObject>();
-        var jType = jBase.GetValue(iType).ToObject<JObject>();
-
-        
-   
-    
-
-        foreach (var iMod in iMods)
+        if (inventoryItemIcon?.Tooltip != null)
         {
+            if (rPanel == null) return;
+            if (uiHover?.Address == 0) return;
+            var modList = ITier.ModList();
+            if (modList == null) return;
 
-            string iTier;
-            if (iMod.ModRecord.AffixType.ToString() == "Prefix")
+            var tooltip = inventoryItemIcon.Tooltip;
+            var pEntity = inventoryItemIcon.Item;
+            if (tooltip == null || pEntity == null || pEntity.Address == 0) return;
+
+            var iInfoBase = pEntity.GetComponent<Base>();
+            if (iInfoBase == null) return;
+            var iInfo = iInfoBase.Info;
+
+            var iTags = iInfoBase.Info.BaseItemTypeDat.MoreTagsFromPath[0];
+            if (iTags == "flask" || iTags == "currency" || iTags == "map" || iTags == "soul_core" ||
+                iTags == "pinnacle" || iTags == "gem" || iTags == "expedition" || iTags == "sanctum" ||
+                iTags == "relic" || iTags == "" || iTags == "ultimatum" || iTags == "tower_augment" || iTags == "jewel") return;
+
+            var compMods = pEntity.GetComponent<Mods>();
+            if (compMods == null) return;
+            var isIdentified = compMods.Identified;
+            if (!isIdentified) return;
+            var iRarity = compMods.ItemRarity.ToString();
+            if (iRarity == "Unique") return;
+
+            var tooltipRect = tooltip.GetClientRect();
+            var bottomLefttRect = tooltipRect.BottomLeft;
+            var bottomLefttRectSuffix = tooltipRect.BottomLeft + new Vector2N(0.0f, 45.0f);
+            var charSize = new Vector2N(0.0f, 15.0f);
+            string iBase = iInfo.BaseItemTypeDat.ClassName;
+            string iType = iInfo.BaseItemTypeDat.ClassName.ToLower();
+
+            if (iInfo.BaseItemTypeDat.MoreTagsFromPath[0] == "armour")
+                iType = iInfo.BaseItemTypeDat.Tags[0];
+            var iBasesplit = iBase.Split(" ");
+            if (iBasesplit.Length == 3) iType = iBasesplit[2].ToLower();
+            var iMods = compMods.ExplicitMods;
+            var jBase = modList.GetValue(iBase).ToObject<JObject>();
+            var jType = jBase.GetValue(iType).ToObject<JObject>();
+            var tierMode = Settings.Features.PoEModSwitch;
+            foreach (var iMod in iMods)
             {
-                var jPrefix = jType.GetValue("Prefix").ToObject<JObject>();
-                iTier = ITier.ItemTier(pEntity, iMod, jPrefix);
+
+                string iTier;
+                if (iMod.ModRecord.AffixType.ToString() == "Prefix")
+                {
+                    var jPrefix = jType.GetValue("Prefix").ToObject<JObject>();
+                    iTier = ITier.ItemTier(iMod, jPrefix, tierMode);
+                    Graphics.DrawTextWithBackground("P " + iTier, bottomLefttRect, Color.White, Color.Black);
+                    bottomLefttRect += charSize;
+                }
+                else
+                {
+                    var jSuffix = jType.GetValue("Suffix").ToObject<JObject>();
+                    iTier = ITier.ItemTier(iMod, jSuffix, tierMode);
+                    Graphics.DrawTextWithBackground("S " + iTier, bottomLefttRectSuffix, Color.White, Color.Black);
+                    bottomLefttRectSuffix += charSize;
+                }
+
+            }
+        }
+        if (Settings.Features.InventoryScanSwitch)
+        {
+            List<Item> iScaner;
+            if (lPanel == null) return;
+            var visibleStash = GameController.Game.IngameState.IngameUi.StashElement.VisibleStash;
+            if (visibleStash == null) return;
+            var visibleStashName = visibleStash.Address.ToString();
+
+            if (InventoryScaner.StashTabName != visibleStashName)
+            {
+                iScaner = InventoryScaner.InventoryScan(visibleStash);
+                if (iScaner == null) return;
+
             }
             else
             {
-                var jSuffix = jType.GetValue("Suffix").ToObject<JObject>();
-                iTier = ITier.ItemTier(pEntity, iMod, jSuffix);
+
+                iScaner = InventoryScaner.StashItems;
+                foreach (var item in iScaner)
+                {
+                    var charSize = new Vector2N(0.0f, 15.0f);
+                    var spos = item.PositionTL + new Vector2N(20.0f, 0.0f);
+                    var rpos = item.PositionTR - new Vector2N(5.0f, 0.0f);
+                    foreach (var mod in item.IMods)
+                    {
+
+                        if (mod.AffixeChar == "P")
+                        {
+                            if (mod.ModTier == 1)
+                            {
+                                Graphics.DrawText(mod.AffixeChar + "1", spos, Settings.Features.Tier1Mod, ExileCore2.Shared.Enums.FontAlign.Right);
+                                spos += charSize;
+                            }
+                            else if (mod.ModTier == 2)
+                            {
+                                Graphics.DrawText(mod.AffixeChar + "2", spos, Settings.Features.Tier2Mod, ExileCore2.Shared.Enums.FontAlign.Right);
+                                spos += charSize;
+                            }
+                            else continue;
+                        }
+                        if (mod.AffixeChar == "S")
+                        {
+                            if (mod.ModTier == 1)
+                            {
+                                Graphics.DrawText(mod.AffixeChar + "1", rpos, Settings.Features.Tier1Mod, ExileCore2.Shared.Enums.FontAlign.Right);
+                                rpos += charSize;
+                            }
+                            else if (mod.ModTier == 2)
+                            {
+                                Graphics.DrawText(mod.AffixeChar + "2", rpos, Settings.Features.Tier2Mod, ExileCore2.Shared.Enums.FontAlign.Right);
+                                rpos += charSize;
+                            }
+                            else continue;
+                        }
+                        continue;
+                    }
+                }
+
             }
-
-            Graphics.DrawTextWithBackground(iTier, bottomLefttRect, Color.White, Color.Black);
-            bottomLefttRect += charSize;
-
         }
-
     }
 
 }
