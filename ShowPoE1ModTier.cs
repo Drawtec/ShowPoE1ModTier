@@ -1,6 +1,7 @@
 using ExileCore2;
 using ExileCore2.PoEMemory.Components;
 using ExileCore2.PoEMemory.Elements;
+using ExileCore2.PoEMemory.MemoryObjects;
 using Newtonsoft.Json.Linq;
 using ShowPoE1ModTier.Classes;
 using System.Collections.Generic;
@@ -30,9 +31,12 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
     {
 
         if (!Settings.Enable) return;
+
         var uiHover = GameController.Game.IngameState.UIHover;
         var rPanel = GameController.Game.IngameState.IngameUi.OpenRightPanel;
         var lPanel = GameController.Game.IngameState.IngameUi.OpenLeftPanel;
+        var npcPanel = GameController.Game.IngameState.IngameUi.SellWindow;
+        var ritualPanel = GameController.Game.IngameState.IngameUi.RitualWindow;
 
         var inventoryItemIcon = uiHover?.AsObject<HoverItemIcon>();
         if (inventoryItemIcon?.Tooltip != null)
@@ -100,15 +104,24 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
         }
         if (Settings.Features.InventoryScanSwitch)
         {
+            Inventory visiblePanel = new();
             List<Item> iScaner;
-            if (lPanel == null) return;
-            var visibleStash = GameController.Game.IngameState.IngameUi.StashElement.VisibleStash;
-            if (visibleStash == null) return;
-            var visibleStashName = visibleStash.Address.ToString();
+            if (lPanel == null && npcPanel == null && ritualPanel == null) return;
+
+            if (lPanel.IsVisible && Settings.Features.StashScanSwitch)
+                visiblePanel = GameController.Game.IngameState.IngameUi.StashElement.VisibleStash;
+            else if (npcPanel.IsVisible && Settings.Features.NPCVendorScanSwitch)
+                visiblePanel = GameController.Game.IngameState.IngameUi.PurchaseWindowHideout.TabContainer.VisibleStash;
+            else if (ritualPanel.IsVisible && Settings.Features.RitualScanSwitch)
+                visiblePanel = visiblePanel = GameController.Game.IngameState.IngameUi.RitualWindow.InventoryElement;
+            else return;
+
+            if (visiblePanel == null) return;
+            var visibleStashName = visiblePanel.Address.ToString();
 
             if (InventoryScaner.StashTabName != visibleStashName)
             {
-                iScaner = InventoryScaner.InventoryScan(visibleStash);
+                iScaner = InventoryScaner.InventoryScan(visiblePanel);
                 if (iScaner == null) return;
 
             }
@@ -128,12 +141,17 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
                         {
                             if (mod.ModTier == 1)
                             {
-                                Graphics.DrawText(mod.AffixeChar + "1", spos, Settings.Features.Tier1Mod, ExileCore2.Shared.Enums.FontAlign.Right);
+                                Graphics.DrawTextWithBackground(mod.AffixeChar + "1", spos, Settings.Features.Tier1Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 spos += charSize;
                             }
                             else if (mod.ModTier == 2)
                             {
-                                Graphics.DrawText(mod.AffixeChar + "2", spos, Settings.Features.Tier2Mod, ExileCore2.Shared.Enums.FontAlign.Right);
+                                Graphics.DrawTextWithBackground(mod.AffixeChar + "2", spos, Settings.Features.Tier2Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
+                                spos += charSize;
+                            }
+                            else if (mod.ModTier == 3)
+                            {
+                                Graphics.DrawTextWithBackground(mod.AffixeChar + "3", spos, Settings.Features.Tier3Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 spos += charSize;
                             }
                             else continue;
@@ -142,12 +160,17 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
                         {
                             if (mod.ModTier == 1)
                             {
-                                Graphics.DrawText(mod.AffixeChar + "1", rpos, Settings.Features.Tier1Mod, ExileCore2.Shared.Enums.FontAlign.Right);
+                                Graphics.DrawTextWithBackground(mod.AffixeChar + "1", rpos, Settings.Features.Tier1Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 rpos += charSize;
                             }
                             else if (mod.ModTier == 2)
                             {
-                                Graphics.DrawText(mod.AffixeChar + "2", rpos, Settings.Features.Tier2Mod, ExileCore2.Shared.Enums.FontAlign.Right);
+                                Graphics.DrawTextWithBackground(mod.AffixeChar + "2", rpos, Settings.Features.Tier2Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
+                                rpos += charSize;
+                            }
+                            else if (mod.ModTier == 3)
+                            {
+                                Graphics.DrawTextWithBackground(mod.AffixeChar + "3", rpos, Settings.Features.Tier3Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 rpos += charSize;
                             }
                             else continue;
