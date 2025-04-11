@@ -130,7 +130,3 @@ namespace ShowPoE1ModTier.Classes
 
     }
 }
-
-
-
-
