@@ -26,12 +26,22 @@ public class ShowPoE1ModTierSettings : ISettings
         [Menu("Switch between PoE1 and PoE2 ModTier Style")]
         public ToggleNode PoEModSwitch { get; set; } = new ToggleNode(true);
 
-        [Menu("Scan Stash and show good Tier icons on items")]
+        [Menu("Enable the Inventory/Stash Scanner")]
         public ToggleNode InventoryScanSwitch { get; set; } = new ToggleNode(false);
+        [Menu("Scan Stash and show good Tier icons on items")]
+        public ToggleNode StashScanSwitch { get; set; } = new ToggleNode(false); 
+        [Menu("Scan Vendor Items and show good Tier icons on items")]
+        public ToggleNode NPCVendorScanSwitch { get; set; } = new ToggleNode(false);
+        [Menu("Scan Ritual Items and show good Tier icons on items")]
+        public ToggleNode RitualScanSwitch { get; set; } = new ToggleNode(false);
         [Menu("set the Color for T1 Mod")]
-        public ColorNode Tier1Mod { get; set; } = new ColorNode(4294902015);
+        public ColorNode Tier1Mod { get; set; } = new ColorNode(16711935);
         [Menu("set the Color for T2 Mod")]
-        public ColorNode Tier2Mod { get; set; } = new ColorNode(16711935);
+        public ColorNode Tier2Mod { get; set; } = new ColorNode(4294902015);
+        [Menu("set the Color for T3 Mod")]
+        public ColorNode Tier3Mod { get; set; } = new ColorNode(4278190335);
+        [Menu("set the Background Color")]
+        public ColorNode CharBGC { get; set; } = new ColorNode(224);
     }
 }
 
