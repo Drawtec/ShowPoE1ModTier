@@ -68,12 +68,14 @@ namespace ShowPoE1ModTier.Classes
                     var affixeType = modRecord.AffixType.ToString();
                     string affixeChar;
                     if (affixeType == "Prefix") affixeChar = "P";
-                    else affixeChar = "S";
-                    var modGroup = modRecord.TypeName;
+                    else if (affixeType == "Suffix") affixeChar = "S";
+                    else continue;
+                        var modGroup = modRecord.TypeName;
                     var rawModName = iMod.RawName;
                     int rawModTier = int.Parse(Regex.Match(rawModName, @"\d+").Value);
                     var jAffixeType = jType.GetValue(affixeType).ToObject<JObject>();
                     var jModGroup = jAffixeType.GetValue(modGroup);
+
                     var imodGroup = jModGroup.ToList<JToken>();
                     var poeModTier = (imodGroup.Count + 1) - rawModTier;
                     var maxTiers = imodGroup.Count;
