@@ -113,12 +113,12 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
             else if (npcPanel.IsVisible && Settings.Features.NPCVendorScanSwitch)
                 visiblePanel = GameController.Game.IngameState.IngameUi.PurchaseWindowHideout.TabContainer.VisibleStash;
             else if (ritualPanel.IsVisible && Settings.Features.RitualScanSwitch)
-                visiblePanel = visiblePanel = GameController.Game.IngameState.IngameUi.RitualWindow.InventoryElement;
+                visiblePanel = GameController.Game.IngameState.IngameUi.RitualWindow.InventoryElement;
             else return;
 
             if (visiblePanel == null) return;
             var visibleStashName = visiblePanel.Address.ToString();
-
+            if (visiblePanel.InvType.ToString() == "QuadStash" && Settings.Features.SkipQuadStash == true) return;
             if (InventoryScaner.StashTabName != visibleStashName)
             {
                 iScaner = InventoryScaner.InventoryScan(visiblePanel);
@@ -128,7 +128,7 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
             else
             {
 
-                iScaner = InventoryScaner.StashItems;
+                    iScaner = InventoryScaner.StashItems;
                 foreach (var item in iScaner)
                 {
                     var charSize = new Vector2N(0.0f, 15.0f);
@@ -137,38 +137,38 @@ public class ShowPoE1ModTier : BaseSettingsPlugin<ShowPoE1ModTierSettings>
                     foreach (var mod in item.IMods)
                     {
 
-                        if (mod.AffixeChar == "P")
+                        if (mod.AffixeChar == "P" && uiHover?.Address == 0)
                         {
                             if (mod.ModTier == 1)
-                            {
+                            {                               
                                 Graphics.DrawTextWithBackground(mod.AffixeChar + "1", spos, Settings.Features.Tier1Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 spos += charSize;
                             }
-                            else if (mod.ModTier == 2)
+                            else if (mod.ModTier == 2 && Settings.Features.ShowOnlyT1Mods == false)
                             {
                                 Graphics.DrawTextWithBackground(mod.AffixeChar + "2", spos, Settings.Features.Tier2Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 spos += charSize;
                             }
-                            else if (mod.ModTier == 3)
+                            else if (mod.ModTier == 3 && Settings.Features.ShowOnlyT1Mods == false)
                             {
                                 Graphics.DrawTextWithBackground(mod.AffixeChar + "3", spos, Settings.Features.Tier3Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 spos += charSize;
                             }
                             else continue;
                         }
-                        if (mod.AffixeChar == "S")
+                        if (mod.AffixeChar == "S" && uiHover?.Address == 0)
                         {
                             if (mod.ModTier == 1)
                             {
                                 Graphics.DrawTextWithBackground(mod.AffixeChar + "1", rpos, Settings.Features.Tier1Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 rpos += charSize;
                             }
-                            else if (mod.ModTier == 2)
+                            else if (mod.ModTier == 2 && Settings.Features.ShowOnlyT1Mods == false)
                             {
                                 Graphics.DrawTextWithBackground(mod.AffixeChar + "2", rpos, Settings.Features.Tier2Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 rpos += charSize;
                             }
-                            else if (mod.ModTier == 3)
+                            else if (mod.ModTier == 3 && Settings.Features.ShowOnlyT1Mods == false)
                             {
                                 Graphics.DrawTextWithBackground(mod.AffixeChar + "3", rpos, Settings.Features.Tier3Mod, ExileCore2.Shared.Enums.FontAlign.Right, Settings.Features.CharBGC);
                                 rpos += charSize;
