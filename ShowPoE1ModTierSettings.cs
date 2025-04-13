@@ -28,7 +28,11 @@ public class ShowPoE1ModTierSettings : ISettings
 
         [Menu("Enable the Inventory/Stash Scanner")]
         public ToggleNode InventoryScanSwitch { get; set; } = new ToggleNode(false);
-        [Menu("Scan Stash and show good Tier icons on items")]
+        [Menu("Enable to ignore QuadStashTabs")]
+        public ToggleNode SkipQuadStash { get; set; } = new ToggleNode(false);
+        [Menu("Enable to show only T1 Mods")]
+        public ToggleNode ShowOnlyT1Mods { get; set; } = new ToggleNode(false);
+        [Menu("Scan Stash Items and show good Tier icons on items")]
         public ToggleNode StashScanSwitch { get; set; } = new ToggleNode(false); 
         [Menu("Scan Vendor Items and show good Tier icons on items")]
         public ToggleNode NPCVendorScanSwitch { get; set; } = new ToggleNode(false);
