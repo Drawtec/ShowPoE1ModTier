@@ -8349,7 +8349,7 @@
 	},
 	"Spear": {
 		"spear": {
-			"suffix": {
+			"Suffix": {
 				"Strength": {
 					"Strength1": 1,
 					"Strength2": 11,
@@ -8479,7 +8479,7 @@
 					"StunDamageIncrease6": 74
 				}
 			},
-			"prefix": {
+			"Prefix": {
 				"LocalPhysicalDamage": {
 					"LocalAddedPhysicalDamage1": 2,
 					"LocalAddedPhysicalDamage2": 13,
