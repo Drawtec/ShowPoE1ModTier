@@ -9,4 +9,4 @@ and it scan the Items in Open Stash, Vendor or Ritual Panel and add Chars to the
 ![ShowPoE1ModTierStashScaner1](https://github.com/user-attachments/assets/47e7c2fe-7199-47c4-9ca5-672f6ce9cd51)
 
 This should increase the Speed of determine how good an item is and this should help to stop wasting time 
-witch Checking if the Mod has the highest Possible Tier
+with Checking if the Mod has the highest Possible Tier
